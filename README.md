@@ -1,4 +1,4 @@
-# Climate Data Verification System
+[climate_change_dataset.csv](https://github.com/user-attachments/files/18410704/climate_change_dataset.csv)# Climate Data Verification System
 
 ## Description
 This project is an AI-powered system for verifying, validating, and authenticating climate datasets. It includes modules for data validation, anomaly detection, API integration, visualization, and report generation. The system is designed to automate the process of ensuring data quality and consistency in climate datasets.
@@ -18,3 +18,8 @@ climate-data-verification/
 ├── visualization.py        # Data visualization module
 ├── report_generation.py    # Report generation module
 ├── README.md               # Project documentation
+
+
+
+resources - 
+![image](https://github.com/user-attachments/assets/8c5bb71a-01b5-4fe5-815b-05c62b917827)
