@@ -6,5 +6,5 @@ def visualize_data(data):
     plt.show()
 
 if __name__ == "__main__":
-    data = pd.read_csv('C:/Users/pritam/Downloads/GlobalLandTemperaturesByCity/GlobalLandTemperaturesByCity.csv')
+    data = pd.read_csv('C:/Users/pritam/Downloads/climate_change_dataset.csv')
     visualize_data(data)
