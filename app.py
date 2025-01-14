@@ -1,39 +1,81 @@
+from flask import Flask, render_template_string
 from data_validation import validate_data
 from anomaly_detection import detect_anomalies
-from api_integration import fetch_cds_data
-from visualization import visualize_data
-from report_generation import generate_report
+from api_integration import fetch_openweathermap_data
 import pandas as pd
+import os
+import plotly.express as px
+
+# Initialize Flask app
+app = Flask(__name__)
 
 
-def main():
-    # Define the API URL
-    api_url = "reanalysis-era5-single-levels"  # Example dataset name
+def fetch_and_process_data(location="London"):
+    """
+    Fetch data from the OpenWeatherMap API and process it.
+    """
+    # Fetch data from the API
+    data = fetch_openweathermap_data(location)
 
-    # Fetch data from the CDS API
-    data_file = fetch_cds_data(api_url)
-
-    if data_file:
-        # Load the data into a pandas DataFrame
-        data = pd.read_csv(data_file)
+    if data:
+        # Convert the API response to a pandas DataFrame
+        weather_data = {
+            "temperature": [data["main"]["temp"]],
+            "humidity": [data["main"]["humidity"]],
+            "pressure": [data["main"]["pressure"]],
+            "wind_speed": [data["wind"]["speed"]],
+            "timestamp": [data["dt"]],  # Unix timestamp
+        }
+        df = pd.DataFrame(weather_data)
 
         # Validate the data
-        if validate_data(data):
+        if validate_data(df):
             # Detect anomalies
-            anomalies = detect_anomalies(data)
-
-            # Visualize the data
-            visualize_data(data)
+            anomalies = detect_anomalies(df)
 
             # Generate a report
-            report = generate_report(data, anomalies)
-            print("Report:")
-            print(report)
+            report = {
+                'total_records': len(df),
+                'missing_values': df.isnull().sum().sum(),
+                'anomalies_detected': len(anomalies)
+            }
+
+            # Create a Plotly visualization
+            fig = px.line(df, y=df.columns, title="Climate Data Visualization")
+            graph_html = fig.to_html(full_html=False)
+
+            return graph_html, report
         else:
-            print("Data validation failed.")
+            return None, "Data validation failed."
     else:
-        print("Failed to fetch data from API.")
+        return None, "Failed to fetch data from OpenWeatherMap API."
+
+
+@app.route("/")
+def home():
+    """
+    Home route to display the visualization and report.
+    """
+    # Fetch and process data
+    graph_html, report = fetch_and_process_data()
+
+    if graph_html:
+        # Render the visualization and report in the browser
+        return render_template_string(
+            """
+            <h1>Climate Data Visualization</h1>
+            <div>{{ graph_html|safe }}</div>
+            <h2>Report</h2>
+            <pre>{{ report }}</pre>
+            """,
+            graph_html=graph_html,
+            report=report
+        )
+    else:
+        return f"<h1>Error</h1><p>{report}</p>"
 
 
 if __name__ == "__main__":
-    main()
+    # Run the Flask app
+    app.run(debug=True)
+
