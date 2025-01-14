@@ -9,9 +9,8 @@ def generate_report(data, anomalies):
     return report
 
 if __name__ == "__main__":
-    data = pd.read_csv('C:/Users/pritam/Downloads/GlobalLandTemperaturesByCity/GlobalLandTemperaturesByCity.csv')
-    anomalies = pd.read_csv('C:/Users/pritam/Downloads/GlobalLandTemperaturesByCity/GlobalLandTemperaturesByCity.csv')
+    data = pd.read_csv('C:/Users/pritam/Downloads/climate_change_dataset.csv')
+    anomalies = pd.read_csv('C:/Users/pritam/Downloads/climate_change_dataset.csv')
     report = generate_report(data, anomalies)
     print("Report:")
     print(report)
-    
